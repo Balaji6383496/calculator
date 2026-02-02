@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Temperature Converter</title>
+  <title>Basic Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -15,108 +15,121 @@
       align-items: center;
     }
 
-    .container {
-      background: #fff;
-      padding: 25px;
-      width: 320px;
+    .calculator {
+      background: #ffffff;
+      padding: 20px;
+      width: 260px;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
-    h2 {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
-    input, select, button {
+    input {
       width: 100%;
-      padding: 8px;
-      margin-top: 10px;
+      height: 40px;
+      font-size: 18px;
+      text-align: right;
+      margin-bottom: 10px;
+      padding: 5px;
       border-radius: 5px;
       border: 1px solid #ccc;
-      font-size: 14px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
     }
 
     button {
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
+      padding: 12px;
+      font-size: 16px;
       border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #e0e0e0;
+    }
+
+    button.operator {
+      background: #007bff;
+      color: white;
+    }
+
+    button.equal {
+      background: #28a745;
+      color: white;
+      grid-column: span 2;
+    }
+
+    button.clear {
+      background: #dc3545;
+      color: white;
+      grid-column: span 2;
     }
 
     button:hover {
-      background-color: #0056b3;
-    }
-
-    .result {
-      margin-top: 15px;
-      font-weight: bold;
-      text-align: center;
-    }
-
-    .error {
-      color: red;
-      font-size: 13px;
-      text-align: center;
-      margin-top: 10px;
+      opacity: 0.9;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2>Temperature Converter</h2>
+  <div class="calculator">
+    <input type="text" id="display" disabled>
 
-    <input type="text" id="tempInput" placeholder="Enter temperature">
+    <div class="buttons">
+      <button class="clear">C</button>
+      <button class="operator">/</button>
+      <button class="operator">*</button>
 
-    <select id="conversionType">
-      <option value="cToF">Celsius → Fahrenheit</option>
-      <option value="fToC">Fahrenheit → Celsius</option>
-    </select>
+      <button>7</button>
+      <button>8</button>
+      <button>9</button>
+      <button class="operator">-</button>
 
-    <button id="convertBtn">Convert</button>
+      <button>4</button>
+      <button>5</button>
+      <button>6</button>
+      <button class="operator">+</button>
 
-    <div class="result" id="result"></div>
-    <div class="error" id="error"></div>
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+
+      <button>0</button>
+      <button>.</button>
+      <button class="equal">=</button>
+    </div>
   </div>
 
   <script>
-    const tempInput = document.getElementById("tempInput");
-    const conversionType = document.getElementById("conversionType");
-    const convertBtn = document.getElementById("convertBtn");
-    const result = document.getElementById("result");
-    const error = document.getElementById("error");
+    const display = document.getElementById("display");
+    const buttons = document.querySelectorAll("button");
 
-    convertBtn.addEventListener("click", convertTemperature);
+    let expression = "";
 
-    function convertTemperature() {
-      const value = tempInput.value.trim();
+    buttons.forEach(button => {
+      button.addEventListener("click", () => {
+        const value = button.textContent;
 
-      result.textContent = "";
-      error.textContent = "";
-
-      // Input validation
-      if (value === "") {
-        error.textContent = "Please enter a temperature value";
-        return;
-      }
-
-      if (isNaN(value)) {
-        error.textContent = "Please enter a valid number";
-        return;
-      }
-
-      const temp = parseFloat(value);
-      let convertedTemp;
-
-      if (conversionType.value === "cToF") {
-        convertedTemp = (temp * 9/5) + 32;
-        result.textContent = `${convertedTemp.toFixed(2)} °F`;
-      } else {
-        convertedTemp = (temp - 32) * 5/9;
-        result.textContent = `${convertedTemp.toFixed(2)} °C`;
-      }
-    }
+        if (value === "C") {
+          expression = "";
+          display.value = "";
+        }
+        else if (value === "=") {
+          try {
+            expression = eval(expression).toString();
+            display.value = expression;
+          } catch {
+            display.value = "Error";
+            expression = "";
+          }
+        }
+        else {
+          expression += value;
+          display.value = expression;
+        }
+      });
+    });
   </script>
 
 </body>
